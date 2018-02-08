@@ -46,6 +46,7 @@ abstract class Phirehose
   protected $conn;
   protected $fdrPool;
   protected $buff;
+  protected $replies;
   // State vars
   protected $filterChanged;
   protected $reconnect;
@@ -619,6 +620,9 @@ abstract class Phirehose
       if ($this->count <> 0) {
         $requestParams['count'] = $this->count;    
       }
+      if ($this->replies) {
+        $requestParams['replies'] = $this->replies;
+      }
   
       // Debugging is useful
       $this->log('Connecting to twitter stream: ' . $url . ' with params: ' . str_replace("\n", '',
@@ -860,6 +864,20 @@ abstract class Phirehose
   {
     $this->secureHostPort = $port;
   }
+
+    /**
+     * Deprecated
+     * From the docs: https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/basic-stream-parameters
+     * "By default @replies are only sent if the current user follows both the sender and receiver of the reply.
+     * For example, consider the case where Alice follows Bob, but Alice doesn’t follow Carol. By default,
+     * if Bob @replies Carol, Alice does not see the Tweet. This mimics twitter.com and api.twitter.com behavior.
+     * To have such Tweets returned in a streaming connection, specify replies=all when connecting."
+     *
+     * @param string $param
+     */
+    public function setReplies($param) {
+        $this->replies = $param;
+    }
 
 } // End of class
 
